@@ -44,16 +44,8 @@ public class SellerDaoJDBC implements SellerDao {
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				Department dep = new Department(); // INSTANCIANDO DEPARTAMENTO
-				dep.setId(rs.getInt("DepartmentId")); // RECEBENDO VALOR DO DEPARTAMENTO
-				dep.setName(rs.getString("DepName")); // RECEBENDO NOME DO DEPARTAMENTO
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setDepartment(dep);
+				Department dep = instantiateDepartment(rs);
+				Seller obj = instantiateSeller(rs, dep);
 				return obj;
 			}
 			return null;
@@ -64,6 +56,26 @@ public class SellerDaoJDBC implements SellerDao {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException { // PROPAGAR EXCEÇÃO SQLEXCEPTION
+		
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setDepartment(dep);
+		return obj;
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException { // PROPAGAR EXCEÇÃO SQLEXCEPTION
+		
+		Department dep = new Department(); // INSTANCIANDO DEPARTAMENTO
+		dep.setId(rs.getInt("DepartmentId")); // RECEBENDO VALOR DO DEPARTAMENTO
+		dep.setName(rs.getString("DepName")); // RECEBENDO NOME DO DEPARTAMENTO
+		return dep;
 	}
 
 	@Override
